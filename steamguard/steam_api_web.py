@@ -125,14 +125,15 @@ def phone_add_ajaxop(session: requests.Session, op: str = 'get_phone_number' or 
     res = session.post(url, data=data)
     return res.json()
 
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 
 def get_tradelink(session: requests.Session):
-    res = session.get('https://steamcommunity.com/my/tradeoffers/privacy')
-    soup = BeautifulSoup(res.text, 'html.parser')
-    element = soup.find(id='trade_offer_access_url')
-    tradelink = element.get('value')
-    return tradelink
+    return
+    #res = session.get('https://steamcommunity.com/my/tradeoffers/privacy')
+    #soup = BeautifulSoup(res.text, 'html.parser')
+    #element = soup.find(id='trade_offer_access_url')
+    #tradelink = element.get('value')
+    #return tradelink
 
 def get_inventory(session: requests.Session, steamid: str):
     res = session.get(f"https://steamcommunity.com/inventory/{steamid}/730/2?l=polish&count=2000")

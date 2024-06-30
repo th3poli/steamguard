@@ -70,7 +70,7 @@ class SteamSession:
             'refresh_token': self.refresh_token,
             'session_id': self.session_id,
             'account_name': self.account_name,
-            'cookies': self.export_cookies()
+            'cookies': self.export_cookies_dict()
         }
 
     def export_cookies_dict(self):
