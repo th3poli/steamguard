@@ -2,7 +2,6 @@
 
 **Steamguard** is a simple python module to add a phone number to your steam account and enable mobile auth. Also generate steam guard codes.
 
-```
 ## Installing Steamguard
 
 Steamguard is available on PyPI:
