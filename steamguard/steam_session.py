@@ -73,5 +73,8 @@ class SteamSession:
             'cookies': self.export_cookies()
         }
 
-    def export_cookies(self):
+    def export_cookies_dict(self):
         return [{ 'name': c.name, 'value': c.value, 'domain': c.domain, 'path': c.path, 'secure': c.secure, 'expires': c.expires } for c in self.session.cookies]
+
+    def export_cookies(self):
+        return [c for c in self.session.cookies]

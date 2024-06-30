@@ -17,14 +17,15 @@ def getSteamQueryTimeDifference(session: requests.Session):
 
     return int(int(res.get('server_time')) - currentTime)
 
-def addAuthenticator(session: requests.Session, access_token: str, steamid: str, device_id: str, authenticator_time: str):
+def addAuthenticator(session: requests.Session, access_token: str, steamid: str, device_id: str, authenticator_time: str = None):
 
     data = {
         'steamid': steamid,
         'authenticator_type': '1',
         'device_identifier': device_id,
-        'authenticator_time': authenticator_time,
-        'sms_phone_id': '1'
+        #'authenticator_time': authenticator_time,
+        'sms_phone_id': '1',
+        'version': 2
     }
 
     params = { 'access_token': access_token }
@@ -45,7 +46,7 @@ def finalizeAddAuthenticator(session: requests.Session, access_token: str, steam
         'activation_code': code,
         'authenticator_code': steam_guard_code,
         'authenticator_time': authenticator_time,
-        'validate_sms_code': '1'
+        #'validate_sms_code': '1'
     }
 
     params = { 'access_token': access_token }

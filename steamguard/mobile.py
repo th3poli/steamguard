@@ -36,7 +36,9 @@ class SteamMobile(SteamSession):
 
         super().__init__(account_name=account_name, password=password)
 
-    def load(self, data: dict, mobile_data: dict = None):
+    def load(self, data: dict):
+
+        if not data: return
 
         self.steamid = data.get('steamid')
         self.access_token = data.get('access_token')
@@ -45,17 +47,19 @@ class SteamMobile(SteamSession):
 
         for c in data.get('cookies', []): self.session.cookies.set(c['name'], c['value'], domain=c['domain'], path=c['path'], secure=c['secure'], expires=c['expires'])
 
-        if not mobile_data: return
+    def load_mobile(self, data: dict):
 
-        self.device_id = mobile_data.get('device_id')
+        if not data: return
 
-        self.shared_secret = mobile_data.get('shared_secret')
-        self.serial_number = mobile_data.get('serial_number')
-        self.revocation_code = mobile_data.get('revocation_code')
-        self.uri = mobile_data.get('uri')
-        self.token_gid = mobile_data.get('token_gid')
-        self.identity_secret = mobile_data.get('identity_secret')
-        self.secret_1 = mobile_data.get('secret_1')
+        self.device_id = data.get('device_id')
+
+        self.shared_secret = data.get('shared_secret')
+        self.serial_number = data.get('serial_number')
+        self.revocation_code = data.get('revocation_code')
+        self.uri = data.get('uri')
+        self.token_gid = data.get('token_gid')
+        self.identity_secret = data.get('identity_secret')
+        self.secret_1 = data.get('secret_1')
 
     def login(self) -> LoginConfirmType:
 
@@ -135,7 +139,7 @@ class SteamMobile(SteamSession):
         return res
 
     def add_mobile_auth(self):
-        res = addAuthenticator(self.session, self.access_token, self.steamid, self.device_id, str(self.steam_time()))
+        res = addAuthenticator(self.session, self.access_token, self.steamid, self.device_id, str(self.get_steam_time()))
         status = res.get('status')
 
         # status codes TODO: Add more
