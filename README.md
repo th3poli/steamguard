@@ -33,7 +33,7 @@ elif code_type == LoginConfirmType.mobile:
     mobile.confirm_login(mobile_code)
 
 data = mobile.export()
-save_exported_data(data, f'{mobile.account_name}_cookies.json')
+mobile.save_exported_data(data, f'{mobile.account_name}_cookies.json')
 
 mobile.add_phone_number('12', '123456789')
 
@@ -47,7 +47,7 @@ mobile.add_mobile_auth()
 
 # SAVE data_mobile! If you lose it, you'll lose access to your account!
 data_mobile = mobile.export_mobile()
-save_exported_data(data_mobile, f'{mobile.account_name}_mobile.json')
+mobile.save_exported_data(data_mobile, f'{mobile.account_name}_mobile.json')
 
 sms_code_confirm = input('SMS Code Confirm > ')
 mobile.add_mobile_auth_confirm(sms_code_confirm)
@@ -74,13 +74,13 @@ elif code_type == LoginConfirmType.mobile:
     mobile.confirm_login(mobile_code)
 
 data = mobile.export()
-save_exported_data(data, f'{mobile.account_name}_cookies.json')
+mobile.save_exported_data(data, f'{mobile.account_name}_cookies.json')
 
 mobile.add_mobile_auth()
 
 # SAVE data_mobile! If you lose it, you'll lose access to your account!
 data_mobile = mobile.export_mobile()
-save_exported_data(data_mobile, f'{mobile.account_name}_mobile.json')
+mobile.save_exported_data(data_mobile, f'{mobile.account_name}_mobile.json')
 
 email_code_confirm = input('Email Code Confirm > ')
 mobile.add_mobile_auth_confirm(email_code_confirm)
@@ -93,7 +93,7 @@ from steamguard import *
 
 mobile = SteamMobile('<steam login>', '')
 
-mobile_data = load_exported_data(f'{mobile.account_name}_mobile.json')
+mobile_data = mobile.load_exported_data(f'{mobile.account_name}_mobile.json')
 
 mobile.load_mobile(mobile_data)
 

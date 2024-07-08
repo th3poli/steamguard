@@ -1,3 +1,4 @@
+import os
 import json
 import time
 import base64
@@ -5,7 +6,8 @@ import requests
 from datetime import datetime, timezone
 
 from .exceptions import *
-from .api import USER_AGENT_MOBILE
+
+USER_AGENT_MOBILE = 'Dalvik/2.1.0 (Linux; U; Android 9; Valve Steam App Version/3)'
 
 class SteamSession:
 
@@ -24,6 +26,8 @@ class SteamSession:
 
         self.session = requests.Session()
         self.session.headers.update({ 'User-Agent': USER_AGENT_MOBILE })
+
+        self.default_folder = '.th3poli-steamguard'
 
     def refresh_access_token(self):
         if not self.refresh_token: raise RefreshTokenEmpty()
@@ -78,3 +82,14 @@ class SteamSession:
 
     def export_cookies(self):
         return [c for c in self.session.cookies]
+
+    def save_exported_data(self, data: dict, path: str):
+        os.makedirs(self.default_folder, exist_ok=True)
+        path = os.path.join(self.default_folder, path)
+        with open(path, 'w', encoding='utf-8') as file: file.write(json.dumps(data))
+
+    def load_exported_data(self, path: str, default = None):
+        os.makedirs(self.default_folder, exist_ok=True)
+        path = os.path.join(self.default_folder, path)
+        if not os.path.isfile(path): return default
+        with open(path, 'r', encoding='utf-8') as file: return json.loads(file.read())

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='steamguard',
-    version='1.0.2',
+    version='1.0.3',
     description='Simple python module to add a phone number to your steam account and enable mobile auth. Also generate steam guard codes.',
     license='MIT',
     author='th3poli',
