@@ -1,5 +1,5 @@
 import rsa
-from base64 import b64encode
+from base64 import b64encode, b64decode
 
 from .exceptions import *
 from .steam_api_web import *
@@ -198,6 +198,39 @@ class SteamMobile(SteamSession):
             'token_gid': self.token_gid,
             'identity_secret': self.identity_secret,
             'secret_1': self.secret_1
+        }
+
+    # ====== #
+    # TRADES #
+    # ====== #
+
+    def _send_confirmation(self, data_confid: str, nonce: str) -> dict:
+        params = self._create_confirmation_params('allow')
+        params['op'] = ('allow',)
+        params['cid'] = data_confid
+        params['ck'] = nonce
+        headers = { 'X-Requested-With': 'XMLHttpRequest' }
+        return self.session.get(f'https://steamcommunity.com/mobileconf/ajaxop', params=params, headers=headers).json()
+
+    def _generate_confirmation_key(self, identity_secret: str, tag: str, timestamp: int) -> bytes:
+        buffer = struct.pack('>Q', timestamp) + tag.encode('ascii')
+        return b64encode(hmac.new(b64decode(identity_secret), buffer, digestmod=hashlib.sha1).digest())
+
+    def get_trade_confirmations(self):
+        params = self._create_confirmation_params('conf')
+        headers = { 'X-Requested-With': 'com.valvesoftware.android.steam.community' }
+        return self.session.get(f'https://steamcommunity.com/mobileconf/getlist', params=params, headers=headers)
+
+    def _create_confirmation_params(self, tag_string: str):
+        timestamp = int(time.time())
+        confirmation_key = self._generate_confirmation_key(self.identity_secret, tag_string, timestamp)
+        return {
+            'p': self.device_id,
+            'a': self.steamid,
+            'k': confirmation_key,
+            't': timestamp,
+            'm': 'android',
+            'tag': tag_string
         }
 
 # TODO:

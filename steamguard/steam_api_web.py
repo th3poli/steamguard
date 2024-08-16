@@ -1,5 +1,6 @@
 import rsa
 import requests
+from bs4 import BeautifulSoup
 
 def getPasswordRSAPublicKey(session: requests.Session, account_name: str):
     url = 'https://api.steampowered.com/IAuthenticationService/GetPasswordRSAPublicKey/v1'
@@ -16,8 +17,8 @@ def beginAuthSessionViaCredentials(session: requests.Session, account_name: str,
         'encryption_timestamp': encryption_timestamp,
         'persistence': '1',
         #'device_friendly_name': '',
-        #'remember_login': 'true',
-        #'platform_type': '',
+        'remember_login': 'true',
+        'platform_type': '3',
         #'guard_data': '',
         #'language': '',
         #'device_details': session.headers.get('User-Agent')
@@ -125,19 +126,14 @@ def phone_add_ajaxop(session: requests.Session, op: str = 'get_phone_number' or 
     res = session.post(url, data=data)
     return res.json()
 
-#from bs4 import BeautifulSoup
-
 def get_tradelink(session: requests.Session):
-    return
-    #res = session.get('https://steamcommunity.com/my/tradeoffers/privacy')
-    #soup = BeautifulSoup(res.text, 'html.parser')
-    #element = soup.find(id='trade_offer_access_url')
-    #tradelink = element.get('value')
-    #return tradelink
+    res = session.get('https://steamcommunity.com/my/tradeoffers/privacy')
+    soup = BeautifulSoup(res.text, 'html.parser')
+    element = soup.find(id='trade_offer_access_url')
+    tradelink = element.get('value')
+    return tradelink
 
-def get_inventory(session: requests.Session, steamid: str):
-    res = session.get(f"https://steamcommunity.com/inventory/{steamid}/730/2?l=polish&count=2000")
-    return res
+def get_inventory(session: requests.Session, steamid: str): return session.get(f"https://steamcommunity.com/inventory/{steamid}/730/2?l=polish&count=2000")
 
 def get_tradeable_inventory(session: requests.Session, steamid: str):
 
@@ -161,6 +157,33 @@ def get_tradeable_inventory(session: requests.Session, steamid: str):
 
     return ready_assets
 
-def get_tradeoffer_details(session: requests.Session):
-    
-    res = session.get('')
+import json
+def send_tradeoffer(session: requests.Session, partner_steamid: str, tradeoffer_token: str, items: list, tradeoffermessage: str = ''):
+
+    tradeoffer_headers = { "Referer": "https://steamcommunity.com/tradeoffer/new" }
+    assets = []
+    for item in items: assets.append(item['tradeoffer_asset'])
+    tradeoffer = {
+        'sessionid': session.cookies.get(name='sessionid', domain='steamcommunity.com'),
+        'serverid': 1,
+        'partner': partner_steamid,
+        'tradeoffermessage': tradeoffermessage,
+        'json_tradeoffer': json.dumps({"newversion": True, "version": 2, "me": { "assets": assets, "currency": [], "ready": False }, "them": { "assets": [], "currency": [], "ready": False }}),
+        'captcha': '',
+        'trade_offer_create_params': json.dumps({ "trade_offer_access_token": tradeoffer_token })
+    }
+    return session.post('https://steamcommunity.com/tradeoffer/new/send', data=tradeoffer, headers=tradeoffer_headers)
+
+def accept_tradeoffer(session: requests.Session, tradeofferid: int, partner: int):
+    headers = { 'Referer': f'https://steamcommunity.com/tradeoffer/{tradeofferid}' }
+    payload = {
+        'sessionid': session.cookies.get('sessionid', domain='steamcommunity.com'),
+        'serverid': '1', 'tradeofferid': str(tradeofferid), 'partner': str(partner), 'captcha': ''
+    }
+    return session.post(f'https://steamcommunity.com/tradeoffer/{tradeofferid}/accept', data=payload, headers=headers)
+
+def get_tradeoffer_items(session: requests.Session, tradeofferid: int):
+    html = session.get(f'https://steamcommunity.com/tradeoffer/{tradeofferid}').text
+    soup = BeautifulSoup(html, 'html.parser')
+    items = soup.find_all('a', { 'class': 'inventory_item_link' })
+    return items

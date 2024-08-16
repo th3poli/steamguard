@@ -36,10 +36,13 @@ class SteamSession:
         data = { 'steamid': self.steamid, 'refresh_token': self.refresh_token }
 
         res = self.session.post("https://api.steampowered.com/IAuthenticationService/GenerateAccessTokenForApp/v1", data=data)
-        print(res, res.text, res.cookies)
         res = res.json().get('response')
-        if not res.get('success'): return False
-        #self.access_token = res.get('access_token')
+        self.access_token = res.get('access_token', self.access_token)
+        self.refresh_token = res.get('refresh_token', self.refresh_token)
+        pre = self.steamid + '%7C%7C'
+        self.session.cookies.set('steamLoginSecure', pre + self.access_token, domain='steamcommunity.com')
+        self.session.cookies.set('steamLoginSecure', pre + self.access_token, domain='store.steampowered.com')
+        self.session.cookies.set('steamRefresh_steam', pre + self.refresh_token, domain='login.steampowered.com')
 
     def is_token_expired(self, token: str): return datetime.now(timezone.utc).timestamp() > self.get_token_expire_timestamp(token) # TODO: Can't it be just int(time.time())
 

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='steamguard',
-    version='1.0.3',
+    version='1.0.4',
     description='Simple python module to add a phone number to your steam account and enable mobile auth. Also generate steam guard codes.',
     license='MIT',
     author='th3poli',
@@ -13,5 +13,5 @@ setup(
 )
 
 # python setup.py sdist bdist_wheel
-# pip install ./dist/steamguard-1.0.2.tar.gz --no-cache-dir
+# pip install ./dist/steamguard-1.0.4.tar.gz --no-cache-dir
 # python -m twine upload .\dist\*
