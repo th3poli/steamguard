@@ -82,9 +82,10 @@ class SteamMobile(SteamSession):
 
         return self.__code_type #, allowed_confirmations[0].get('associated_message')
 
-    def confirm_login(self, steam_guard_code: str):
+    def confirm_login(self, steam_guard_code: str = None):
 
-        updateAuthSessionWithSteamGuardCode(self.session, self.__client_id, self.steamid, steam_guard_code, self.__code_type) # INFO: We're not getting anything interesting from here
+        if self.__code_type != 1:
+            updateAuthSessionWithSteamGuardCode(self.session, self.__client_id, self.steamid, steam_guard_code, self.__code_type) # INFO: We're not getting anything interesting from here
 
         res = pollAuthSessionStatus(self.session, self.__client_id, self.__request_id)
 
@@ -96,8 +97,8 @@ class SteamMobile(SteamSession):
         finalizelogin(self.session, self.refresh_token)
         #self.session_id = self.session.cookies.get('sessionid', domain='steamcommunity.com') # TODO: Is session_id really necessary to be set? Can't we generate one?
     
-    def get_steampowered(self): self.session.get('https://store.steampowered.com/')
-    def get_steamcommunity(self): self.session.get('https://steamcommunity.com/')
+    def get_steampowered(self): return self.session.get('https://store.steampowered.com/')
+    def get_steamcommunity(self): return self.session.get('https://steamcommunity.com/')
 
     def add_phone_number(self, country_code: str, phone_number: str): # 48 - Poland :)
 

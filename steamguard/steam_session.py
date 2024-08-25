@@ -30,8 +30,8 @@ class SteamSession:
         self.default_folder = '.th3poli-steamguard'
 
     def refresh_access_token(self):
-        if not self.refresh_token: raise RefreshTokenEmpty()
-        if self.is_token_expired(self.refresh_token): raise RefreshTokenExpired()
+        if not self.refresh_token: raise RefreshTokenEmpty('Refresh token is empty')
+        if self.is_token_expired(self.refresh_token): raise RefreshTokenExpired('Refresh token expired')
 
         data = { 'steamid': self.steamid, 'refresh_token': self.refresh_token }
 
